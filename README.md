@@ -1,113 +1,222 @@
-# SafeWord PWA
+# SafeWord
+### The Name of the Game is Safety
 
-A digital version of the SafeWord card game — a Taboo-style party game with a safety theme. Built as a Progressive Web App (no app store needed).
+A fast-paced workplace communication game inspired by classic Taboo-style gameplay.
 
-## Tech Stack
+Players race against the clock to get teammates to guess safety-related terms without saying the forbidden words. Whether you're running safety training, onboarding new employees, or just looking for a more engaging way to talk safety, SafeWord transforms learning into competition.
 
-| Layer | Choice | Why |
-|---|---|---|
-| Framework | **React 18** | Component-based, great for game state screens |
-| Build tool | **Vite** | Fast dev server, instant HMR |
-| PWA | **vite-plugin-pwa** | Auto service worker + manifest injection |
-| Styling | **Plain CSS** (CSS variables) | Zero overhead, full control, mobile-first |
-| State | **React hooks** (useState, useEffect, useCallback) | No extra libraries needed |
-| Hosting | **Any static host** (Vercel, Netlify, GitHub Pages) | Just `npm run build` → deploy `dist/` |
+> Learn Safety. Build Teams. Have Fun.
 
 ---
 
-## Getting Started
+## 🎮 What Is SafeWord?
+
+SafeWord is a digital Progressive Web App (PWA) adaptation of the SafeWord card game.
+
+Each card contains:
+
+✅ A **SafeWord** that teammates must guess
+
+🚫 A list of **Can't Say** words that are off limits
+
+⏱️ A countdown timer
+
+🏆 Team scoring and round-based gameplay
+
+The result is a fast, competitive, and surprisingly effective way to reinforce workplace safety concepts.
+
+---
+
+## ✨ Features
+
+- 📱 Installable on phones, tablets, and desktops
+- 🌐 Works directly in the browser
+- 📶 Offline support via Service Worker
+- ⚡ Fast React + Vite performance
+- 🎯 Team-based scoring
+- ⏱️ Configurable rounds
+- 🔄 Pass-the-device gameplay
+- 🎮 No account required
+
+---
+
+## 🚀 Tech Stack
+
+| Layer | Technology |
+|---------|---------|
+| Frontend | React 18 |
+| Build Tool | Vite |
+| PWA Support | vite-plugin-pwa |
+| Styling | CSS Variables |
+| State Management | React Hooks |
+| Hosting | Vercel / Netlify / GitHub Pages |
+
+---
+
+## 🏗️ Getting Started
 
 ```bash
 npm install
-npm run dev       # dev server at http://localhost:5173
-npm run build     # production build → /dist
-npm run preview   # preview the production build
+
+npm run dev
+npm run build
+npm run preview
+```
+
+Development server:
+
+```txt
+http://localhost:5173
 ```
 
 ---
 
-## Project Structure
+## 📂 Project Structure
 
-```
+```txt
 safeword-pwa/
+│
 ├── public/
-│   ├── manifest.json        # PWA manifest
-│   ├── sw.js                # Service worker (offline support)
-│   └── icons/               # App icons (192x192, 512x512 PNG)
+│   ├── manifest.json
+│   ├── sw.js
+│   └── icons/
+│
 ├── src/
 │   ├── data/
-│   │   └── cards.js         # Word card data (safeWord + cantSay)
+│   │   └── cards.js
+│   │
 │   ├── hooks/
-│   │   └── useGameState.js  # All game logic (timer, scoring, turns)
+│   │   └── useGameState.js
+│   │
 │   ├── components/
 │   │   ├── HomeScreen.jsx
 │   │   ├── SetupScreen.jsx
-│   │   └── PlayingScreen.jsx
 │   │   ├── PassDeviceScreen.jsx
+│   │   ├── PlayingScreen.jsx
 │   │   ├── RoundEndScreen.jsx
 │   │   └── GameOverScreen.jsx
-│   ├── App.jsx              # Screen router
-│   ├── main.jsx             # Entry point + SW registration
-│   └── styles.css           # Global styles
-├── index.html
+│   │
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── styles.css
+│
 ├── vite.config.js
-└── package.json
+├── package.json
+└── index.html
 ```
 
 ---
 
-## Game Flow
+## 🎯 Gameplay Flow
 
-```
-HOME → SETUP → PASS_DEVICE → PLAYING → ROUND_END → PASS_DEVICE (loop)
-                                                  ↘ GAME_OVER (when target score hit)
+```txt
+HOME
+  ↓
+SETUP
+  ↓
+PASS DEVICE
+  ↓
+PLAYING
+  ↓
+ROUND END
+  ↓
+PASS DEVICE
+  ↺
+
+OR
+
+GAME OVER 🏆
 ```
 
 ---
 
-## Adding Cards
+## 🃏 Card Format
 
-Edit `src/data/cards.js`. Each card is:
+Cards live in:
+
+```txt
+src/data/cards.js
+```
+
+Example:
 
 ```js
 {
   id: 16,
-  safeWord: 'FIRE DRILL',
-  cantSay: ['practice', 'alarm', 'school', 'bell', 'outside'],
+  safeWord: "FIRE DRILL",
+  cantSay: [
+    "practice",
+    "alarm",
+    "school",
+    "bell",
+    "outside"
+  ]
 }
 ```
 
 ---
 
-## Icons
+## 📱 PWA Installation
 
-You need to add real icons at:
-- `public/icons/icon-192.png` (192×192)
-- `public/icons/icon-512.png` (512×512)
+SafeWord can be installed like a native app.
 
-Use a tool like [Favicon.io](https://favicon.io) or [PWA Asset Generator](https://github.com/onderceylan/pwa-asset-generator) to generate them from a logo.
+### Mobile
+
+1. Open in browser
+2. Tap "Add to Home Screen"
+3. Launch like any other app
+
+### Desktop
+
+1. Open in Chrome, Edge, or Brave
+2. Click Install
+3. Launch from desktop
+
+No app store required.
 
 ---
 
-## Deploying (Vercel)
+## 🚢 Deployment
+
+### Vercel
 
 ```bash
 npm run build
-# Push to GitHub, connect repo in Vercel dashboard
-# Set output directory to "dist"
 ```
 
-Or drag-and-drop the `dist/` folder to [Netlify Drop](https://app.netlify.com/drop).
+Push to GitHub and connect the repository to Vercel.
+
+Output directory:
+
+```txt
+dist
+```
+
+### Netlify
+
+```bash
+npm run build
+```
+
+Drag and drop the generated `dist/` folder into Netlify.
 
 ---
 
-## To-Do / Future Features
+## 🔮 Future Plans
 
-- [ ] Sound effects (correct/wrong buzzer)
-- [ ] Custom card editor (add your own words)
-- [ ] Multiple card packs / categories
+- [ ] Sound effects
+- [ ] Multiple card packs
+- [ ] Custom card creator
+- [ ] Mobile vibration feedback
 - [ ] Animated card transitions
-- [ ] Vibration feedback on mobile (`navigator.vibrate`)
-- [ ] Configurable turn duration
-- [ ] More than 2 teams
-- [ ] Persistent leaderboard (localStorage)
+- [ ] Local leaderboard
+- [ ] Additional game modes
+- [ ] Multiplayer support
+
+---
+
+## 🛡️ SafeWord
+
+**Serious Safety. Seriously Fun.**
+
+Built with React, Vite, and a mission to make safety training something people actually remember.

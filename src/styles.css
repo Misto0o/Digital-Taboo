@@ -48,6 +48,60 @@ body,
   margin: 0 auto;
 }
 
+/* ── ROOM SCREEN ───────────────────────────────────────────────────── */
+.room-screen {
+  justify-content: center;
+  text-align: center;
+  gap: 20px;
+}
+
+.room-sub {
+  color: var(--text-muted);
+  line-height: 1.6;
+  max-width: 280px;
+}
+
+.room-error {
+  color: var(--penalty);
+  font-size: 0.9rem;
+}
+
+.code-input {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+}
+
+/* ── ROOM BADGE ────────────────────────────────────────────────────── */
+.room-badge {
+  position: fixed;
+  top: 12px;
+  right: 16px;
+  background: var(--surface2);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: 20px;
+  z-index: 100;
+}
+
+.room-badge strong {
+  color: var(--accent2);
+  letter-spacing: 1px;
+}
+
+/* ── GUEST OVERLAY ─────────────────────────────────────────────────── */
+.guest-overlay {
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  font-size: 1.2rem;
+}
+
 /* ── Typography ────────────────────────────────────────────────────── */
 .screen-title {
   font-family: var(--font-display);
@@ -624,4 +678,11 @@ body,
   font-size: 1.2rem;
   font-weight: 900;
   color: var(--accent2);
+}
+
+.guest-waiting {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  text-align: center;
+  padding: 16px;
 }

@@ -114,6 +114,12 @@ export function useGameState() {
   const currentCard = deck[currentCardIndex] ?? null;
   const currentTeam = teams[currentTeamIndex];
 
+  const syncFromRemote = useCallback((remoteState) => {
+    if (remoteState.screen) setScreen(remoteState.screen);
+    if (remoteState.teams) setTeams(remoteState.teams);
+    if (remoteState.currentTeamIndex !== undefined) setCurrentTeamIndex(remoteState.currentTeamIndex);
+  }, []);
+
   return {
     screen,
     teams,
@@ -125,6 +131,8 @@ export function useGameState() {
     roundResults,
     targetScore,
     TURN_DURATION,
+    currentCardIndex,
+    syncFromRemote,
     startGame,
     startTurn,
     handleCorrect,
@@ -133,5 +141,6 @@ export function useGameState() {
     endTurn,
     confirmRoundResults,
     resetGame,
+    syncFromRemote,
   };
 }

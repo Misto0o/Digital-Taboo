@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function RoundEndScreen({ roundResults, currentTeam, onConfirm }) {
+export default function RoundEndScreen({ roundResults, currentTeam, onConfirm, readOnly }) {
   const correct = roundResults.filter((r) => r.result === 'correct').length;
   const skipped = roundResults.filter((r) => r.result === 'skip').length;
   const penalties = roundResults.filter((r) => r.result === 'penalty').length;
@@ -46,9 +46,14 @@ export default function RoundEndScreen({ roundResults, currentTeam, onConfirm })
         </div>
       )}
 
-      <button className="btn btn-primary btn-xl" onClick={onConfirm}>
-        Next Team →
-      </button>
+      {!readOnly && (
+        <button className="btn btn-primary btn-xl" onClick={onConfirm}>
+          Next Team →
+        </button>
+      )}
+      {readOnly && (
+        <p className="guest-waiting">⏳ Waiting for host to continue...</p>
+      )}
     </div>
   );
 }

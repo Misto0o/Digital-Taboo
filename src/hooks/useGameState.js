@@ -53,6 +53,7 @@ export function useGameState() {
 
   const startTurn = useCallback(() => {
     setRoundResults([]);
+    setCurrentCardIndex(0); // always start from 0 for each turn
     setTimeLeft(TURN_DURATION);
     setTimerRunning(true);
     setScreen(SCREENS.PLAYING);
@@ -90,14 +91,29 @@ export function useGameState() {
     );
     setTeams(updatedTeams);
 
-    const winner = updatedTeams.find((t) => t.score >= targetScore);
-    if (winner) {
-      setScreen(SCREENS.GAME_OVER);
-    } else {
-      const nextTeam = (currentTeamIndex + 1) % teams.length;
-      setCurrentTeamIndex(nextTeam);
-      setScreen(SCREENS.PASS_DEVICE);
+    const nextTeam = (currentTeamIndex + 1) % teams.length;
+    const isEndOfRound = nextTeam === 0; // back to team 1 = full round complete
+
+    if (isEndOfRound) {
+      // check for winner only after all teams have played
+      const winner = updatedTeams.find((t) => t.score >= targetScore);
+      if (winner) {
+        // tiebreak — if multiple teams hit target, whoever has highest score wins
+        const maxScore = Math.max(...updatedTeams.map((t) => t.score));
+        const tied = updatedTeams.filter((t) => t.score === maxScore);
+        if (tied.length > 1) {
+          // tiebreak round — don't end yet, keep playing
+          setCurrentTeamIndex(nextTeam);
+          setScreen(SCREENS.PASS_DEVICE);
+          return;
+        }
+        setScreen(SCREENS.GAME_OVER);
+        return;
+      }
     }
+
+    setCurrentTeamIndex(nextTeam);
+    setScreen(SCREENS.PASS_DEVICE);
   }, [roundResults, teams, currentTeamIndex, targetScore]);
 
   const resetGame = useCallback(() => {
@@ -111,6 +127,18 @@ export function useGameState() {
     setTimeLeft(TURN_DURATION);
   }, []);
 
+  const initGuestGame = useCallback((teamNames, target) => {
+    setTeams(teamNames.map((name) => ({ name, score: 0 })));
+    setTargetScore(target);
+    const enriched = cards.map((card) => {
+      const wordParts = card.safeWord.toLowerCase().split(' ').filter((w) => w.length > 2);
+      const allForbidden = [...new Set([...card.cantSay, ...wordParts])];
+      return { ...card, cantSay: allForbidden };
+    });
+    setDeck(shuffleCards(enriched));
+    setCurrentCardIndex(0);
+  }, []);
+
   const currentCard = deck[currentCardIndex] ?? null;
   const currentTeam = teams[currentTeamIndex];
 
@@ -118,6 +146,9 @@ export function useGameState() {
     if (remoteState.screen) setScreen(remoteState.screen);
     if (remoteState.teams) setTeams(remoteState.teams);
     if (remoteState.currentTeamIndex !== undefined) setCurrentTeamIndex(remoteState.currentTeamIndex);
+    if (remoteState.roundResults) setRoundResults(remoteState.roundResults);
+    if (remoteState.targetScore) setTargetScore(remoteState.targetScore);
+    // currentCardIndex intentionally NOT synced — each player manages their own
   }, []);
 
   return {
@@ -132,6 +163,7 @@ export function useGameState() {
     targetScore,
     TURN_DURATION,
     currentCardIndex,
+    deck,
     syncFromRemote,
     startGame,
     startTurn,
@@ -142,5 +174,6 @@ export function useGameState() {
     confirmRoundResults,
     resetGame,
     syncFromRemote,
+    initGuestGame,
   };
 }

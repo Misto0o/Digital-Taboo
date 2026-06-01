@@ -18,6 +18,9 @@ export default function RoomScreen({ onCreateRoom, onJoinRoom, error }) {
             <button className="btn btn-ghost btn-xl" onClick={() => setMode('join')}>
                 Join Room
             </button>
+            <div className="solo-tip">
+                🎮 Playing alone or same device? Just create a room and tap through yourself!
+            </div>
         </div>
     );
 

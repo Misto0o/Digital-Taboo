@@ -26,3 +26,14 @@ self.addEventListener('fetch', (event) => {
     caches.match(event.request).then((cached) => cached || fetch(event.request))
   );
 });
+
+self.addEventListener('fetch', (event) => {
+  // don't intercept Firebase requests
+  if (event.request.url.includes('firestore.googleapis.com') ||
+    event.request.url.includes('firebase')) {
+    return;
+  }
+  event.respondWith(
+    caches.match(event.request).then((cached) => cached || fetch(event.request))
+  );
+});

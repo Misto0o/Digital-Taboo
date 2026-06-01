@@ -30,26 +30,26 @@ export default function App() {
   const room = useRoom();
   const { isHost } = room;
   const remoteTeamIndex = room.roomState?.currentTeamIndex ?? game.currentTeamIndex;
-  const isActivePlayer = isHost
-    ? remoteTeamIndex === 0
-    : remoteTeamIndex === 1;
+  const isLocalOnly = !room.roomCode;
+  const isActivePlayer = room.roomState?.activePlayer === (isHost ? 'host' : 'guest');
   const [localScreen, setLocalScreen] = useState('room');
 
   const activeScreen = game.screen !== SCREENS.HOME ? game.screen : localScreen;
 
-  // guest always syncs screen from host, only syncs full state when it's NOT their turn
   useEffect(() => {
     if (!isHost && room.roomState) {
-      const remoteIndex = room.roomState.currentTeamIndex ?? 0;
-      const guestIsActive = remoteIndex === 1;
+      const guestIsActive = room.roomState.activePlayer === 'guest';
 
-      if (!guestIsActive) {
-        // host's turn — sync everything
-        game.syncFromRemote(room.roomState);
-      } else {
-        // guest's turn — only sync the screen transition so they get unblocked
-        if (room.roomState.screen) game.syncFromRemote({ screen: room.roomState.screen, currentTeamIndex: remoteIndex, teams: room.roomState.teams });
+      // init deck on first join if needed
+      if (game.deck?.length === 0 && room.roomState.teams) {
+        game.initGuestGame(room.roomState.teams.map(t => t.name), room.roomState.targetScore ?? 10);
       }
+
+      // if it's the guest's turn, don't sync anything — they drive their own state
+      if (guestIsActive) return;
+
+      // only sync when host is active
+      game.syncFromRemote(room.roomState);
     }
   }, [room.roomState]);
 
@@ -61,21 +61,38 @@ export default function App() {
         teams: game.teams,
         currentTeamIndex: game.currentTeamIndex,
         roundResults: game.roundResults,
-        currentCardIndex: game.currentCardIndex ?? 0,
+        hostCardIndex: game.currentCardIndex ?? 0,
+        targetScore: game.targetScore,
+        activePlayer: game.currentTeamIndex === 0 ? 'host' : 'guest',
       });
     }
   }, [game.screen, game.teams, game.currentTeamIndex, game.roundResults, game.currentCardIndex]);
 
+  // host watches for game over pushed by guest
+  useEffect(() => {
+    if (isHost && room.roomState?.screen === SCREENS.GAME_OVER) {
+      game.syncFromRemote({
+        screen: SCREENS.GAME_OVER,
+        teams: room.roomState.teams,
+      });
+    }
+  }, [room.roomState?.screen]);
+
   // guest pushes state when it's their turn
   useEffect(() => {
     if (!isHost && room.roomCode && game.screen !== SCREENS.HOME && isActivePlayer) {
-      room.updateRoom({
-        screen: game.screen,
-        teams: game.teams,
-        currentTeamIndex: game.currentTeamIndex,
-        roundResults: game.roundResults,
-        currentCardIndex: game.currentCardIndex ?? 0,
-      });
+      const timeout = setTimeout(() => {
+        room.updateRoom({
+          screen: game.screen,
+          teams: game.teams,
+          currentTeamIndex: game.currentTeamIndex,
+          roundResults: game.roundResults,
+          guestCardIndex: game.currentCardIndex ?? 0,
+          targetScore: game.targetScore,
+          activePlayer: game.currentTeamIndex === 0 ? 'host' : 'guest',
+        });
+      }, 100);
+      return () => clearTimeout(timeout);
     }
   }, [game.screen, game.teams, game.currentTeamIndex, game.roundResults, game.currentCardIndex]);
 
@@ -89,6 +106,8 @@ export default function App() {
       currentTeamIndex: 0,
       roundResults: [],
       currentCardIndex: 0,
+      targetScore: target,
+      activePlayer: 'host', // team 1 always goes first
     });
     setLocalScreen(SCREENS.HOME);
     alert(`Your room code is: ${code}\nShare this with your friend!`);
@@ -96,9 +115,12 @@ export default function App() {
 
   const handleJoinRoom = async (code) => {
     const joined = await room.joinRoom(code);
-    if (joined) setLocalScreen(SCREENS.HOME);
+    if (joined) {
+      // guest needs their own deck and game initialized
+      // we'll get team names from Firestore on first sync
+      setLocalScreen(SCREENS.HOME);
+    }
   };
-
   const handleReset = async () => {
     await room.deleteRoom();
     game.resetGame();

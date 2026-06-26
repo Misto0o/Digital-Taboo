@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 
-export default function SetupScreen({ onStart }) {
+export default function SetupScreen({ onStart, categories, cardsLoading }) {
   const [teamNames, setTeamNames] = useState(['Team 1', 'Team 2']);
   const [targetScore, setTargetScore] = useState(10);
+  const [selectedCategories, setSelectedCategories] = useState([]); // [] = All Categories
 
   const updateTeam = (index, value) => {
     const updated = [...teamNames];
@@ -10,10 +11,18 @@ export default function SetupScreen({ onStart }) {
     setTeamNames(updated);
   };
 
-  const handleStart = () => {
-    const sanitized = teamNames.map((n) => n.trim() || `Team ${teamNames.indexOf(n) + 1}`);
-    onStart(sanitized, targetScore);
+  const toggleCategory = (category) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
+    );
   };
+
+  const handleStart = () => {
+    const sanitized = teamNames.map((n, i) => n.trim() || `Team ${i + 1}`);
+    onStart(sanitized, targetScore, selectedCategories);
+  };
+
+  const allSelected = selectedCategories.length === 0;
 
   return (
     <div className="screen setup-screen">
@@ -49,7 +58,32 @@ export default function SetupScreen({ onStart }) {
         </div>
       </div>
 
-      <button className="btn btn-primary btn-xl" onClick={handleStart}>
+      <div className="setup-section">
+        <label className="setup-label">Categories</label>
+        {cardsLoading ? (
+          <p className="category-loading">Loading categories…</p>
+        ) : (
+          <div className="category-chips">
+            <button
+              className={`category-chip ${allSelected ? 'active' : ''}`}
+              onClick={() => setSelectedCategories([])}
+            >
+              All Categories
+            </button>
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                className={`category-chip ${selectedCategories.includes(cat) ? 'active' : ''}`}
+                onClick={() => toggleCategory(cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <button className="btn btn-primary btn-xl" onClick={handleStart} disabled={cardsLoading}>
         Start Game
       </button>
     </div>

@@ -20,10 +20,8 @@ export default function PlayingScreen({
       </div>
     );
   }
-
   const timerPct = (timeLeft / turnDuration) * 100;
   const timerWarning = timeLeft <= 10;
-
   return (
     <div className="screen playing-screen">
       {/* Timer bar */}
@@ -33,11 +31,9 @@ export default function PlayingScreen({
           style={{ width: `${timerPct}%` }}
         />
       </div>
-
       <div className={`timer-display ${timerWarning ? 'warning' : ''}`}>
         {timeLeft}s — {currentTeam.name}
       </div>
-
       {/* Card */}
       <div className="card">
         <div className="card-safe-word">{currentCard.safeWord}</div>
@@ -50,7 +46,6 @@ export default function PlayingScreen({
           ))}
         </ul>
       </div>
-
       {/* Action buttons */}
       <div className="action-buttons">
         <button className="btn btn-correct" onClick={onCorrect}>
@@ -63,7 +58,6 @@ export default function PlayingScreen({
           ✗ Said It
         </button>
       </div>
-
       <button className="btn btn-ghost btn-sm end-turn-btn" onClick={onEndTurn}>
         End Turn Early
       </button>

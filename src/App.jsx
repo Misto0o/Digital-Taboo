@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useGameState, SCREENS } from './hooks/useGameState';
 import { useRoom } from './hooks/useRoom';
+import { useCards } from './hooks/useCards';
+import AdminRoute from './components/AdminRoute';
 import RoomScreen from './components/RoomScreen';
 import SetupScreen from './components/SetupScreen';
 import PassDeviceScreen from './components/PassDeviceScreen';
@@ -25,8 +27,16 @@ function GuestOverlay() {
   );
 }
 
-export default function App() {
-  const game = useGameState();
+// Simple client-side routing: visiting /admin shows the card manager
+// instead of the game. No router library needed for one extra route.
+// This check happens once at module scope (the pathname doesn't change
+// during a page's lifetime), so it's safe to use to pick which component
+// tree mounts, without violating Rules of Hooks inside either one.
+const isAdminRoute = typeof window !== 'undefined' && window.location.pathname === '/admin';
+
+function GameApp() {
+  const { categories, loading: cardsLoading, buildDeck } = useCards();
+  const game = useGameState(buildDeck);
   const room = useRoom();
   const { isHost } = room;
   const remoteTeamIndex = room.roomState?.currentTeamIndex ?? game.currentTeamIndex;
@@ -42,7 +52,11 @@ export default function App() {
 
       // init deck on first join if needed
       if (game.deck?.length === 0 && room.roomState.teams) {
-        game.initGuestGame(room.roomState.teams.map(t => t.name), room.roomState.targetScore ?? 10);
+        game.initGuestGame(
+          room.roomState.teams.map((t) => t.name),
+          room.roomState.targetScore ?? 10,
+          room.roomState.selectedCategories ?? []
+        );
       }
 
       // if it's the guest's turn, don't sync anything — they drive their own state
@@ -63,6 +77,7 @@ export default function App() {
         roundResults: game.roundResults,
         hostCardIndex: game.currentCardIndex ?? 0,
         targetScore: game.targetScore,
+        selectedCategories: game.selectedCategories,
         activePlayer: game.currentTeamIndex === 0 ? 'host' : 'guest',
       });
     }
@@ -89,6 +104,7 @@ export default function App() {
           roundResults: game.roundResults,
           guestCardIndex: game.currentCardIndex ?? 0,
           targetScore: game.targetScore,
+          selectedCategories: game.selectedCategories,
           activePlayer: game.currentTeamIndex === 0 ? 'host' : 'guest',
         });
       }, 100);
@@ -98,8 +114,8 @@ export default function App() {
 
   const handleCreateRoom = () => setLocalScreen(SCREENS.SETUP);
 
-  const handleStartGame = async (teamNames, target) => {
-    game.startGame(teamNames, target);
+  const handleStartGame = async (teamNames, target, selectedCategories) => {
+    game.startGame(teamNames, target, selectedCategories);
     const code = await room.createRoom({
       screen: SCREENS.PASS_DEVICE,
       teams: teamNames.map((name) => ({ name, score: 0 })),
@@ -107,6 +123,7 @@ export default function App() {
       roundResults: [],
       currentCardIndex: 0,
       targetScore: target,
+      selectedCategories,
       activePlayer: 'host', // team 1 always goes first
     });
     setLocalScreen(SCREENS.HOME);
@@ -140,18 +157,23 @@ export default function App() {
       )}
 
       {activeScreen === SCREENS.SETUP && (
-        <SetupScreen onStart={handleStartGame} />
+        <SetupScreen
+          onStart={handleStartGame}
+          categories={categories}
+          cardsLoading={cardsLoading}
+        />
       )}
 
-      {activeScreen === SCREENS.PASS_DEVICE && (
-        isActivePlayer
-          ? <PassDeviceScreen currentTeam={game.currentTeam} teams={game.teams} onReady={game.startTurn} />
-          : <GuestOverlay />
-      )}
+      {activeScreen === SCREENS.PASS_DEVICE &&
+        (isActivePlayer ? (
+          <PassDeviceScreen currentTeam={game.currentTeam} teams={game.teams} onReady={game.startTurn} />
+        ) : (
+          <GuestOverlay />
+        ))}
 
-      {activeScreen === SCREENS.PLAYING && (
-        isActivePlayer
-          ? <PlayingScreen
+      {activeScreen === SCREENS.PLAYING &&
+        (isActivePlayer ? (
+          <PlayingScreen
             currentCard={game.currentCard}
             timeLeft={game.timeLeft}
             turnDuration={game.TURN_DURATION}
@@ -161,22 +183,38 @@ export default function App() {
             onPenalty={game.handlePenalty}
             onEndTurn={game.endTurn}
           />
-          : <GuestOverlay />
-      )}
+        ) : (
+          <GuestOverlay />
+        ))}
 
-      {activeScreen === SCREENS.ROUND_END && (
-        isActivePlayer
-          ? <RoundEndScreen roundResults={game.roundResults} currentTeam={game.currentTeam} onConfirm={game.confirmRoundResults} />
-          : <RoundEndScreen roundResults={game.roundResults} currentTeam={game.currentTeam} onConfirm={null} readOnly />
-      )}
+      {activeScreen === SCREENS.ROUND_END &&
+        (isActivePlayer ? (
+          <RoundEndScreen
+            roundResults={game.roundResults}
+            currentTeam={game.currentTeam}
+            onConfirm={game.confirmRoundResults}
+          />
+        ) : (
+          <RoundEndScreen
+            roundResults={game.roundResults}
+            currentTeam={game.currentTeam}
+            onConfirm={null}
+            readOnly
+          />
+        ))}
 
       {activeScreen === SCREENS.GAME_OVER && (
-        <GameOverScreen
-          teams={game.teams}
-          targetScore={game.targetScore}
-          onPlayAgain={handleReset}
-        />
+        <GameOverScreen teams={game.teams} targetScore={game.targetScore} onPlayAgain={handleReset} />
       )}
     </>
   );
+}
+
+export default function App() {
+  // No hooks here — just picks which tree to mount. GameApp and AdminRoute
+  // each own their own hooks internally, so neither violates Rules of Hooks.
+  if (isAdminRoute) {
+    return <AdminRoute />;
+  }
+  return <GameApp />;
 }

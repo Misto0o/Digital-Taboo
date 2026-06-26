@@ -129,6 +129,11 @@ body,
   opacity: 0.9;
 }
 
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .btn-primary {
   background: var(--accent);
   color: #fff;
@@ -318,6 +323,37 @@ body,
   background: var(--accent);
   border-color: var(--accent);
   color: #fff;
+}
+
+/* ── CATEGORY CHIPS (setup screen) ────────────────────────────────────── */
+.category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.category-chip {
+  background: var(--surface);
+  border: 1.5px solid var(--surface2);
+  border-radius: 20px;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.category-chip.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.category-loading {
+  color: var(--text-muted);
+  font-size: 0.9rem;
 }
 
 /* ── PASS DEVICE ───────────────────────────────────────────────────── */
@@ -695,4 +731,192 @@ body,
   color: var(--text-muted);
   text-align: center;
   width: 100%;
+}
+
+/* ── ADMIN ─────────────────────────────────────────────────────────── */
+.admin-screen {
+  max-width: 1200px;
+  width: 100%;
+  align-items: stretch;
+  gap: 16px;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.admin-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+}
+
+.admin-login-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 60px;
+}
+
+.admin-error {
+  color: var(--penalty);
+  font-size: 0.85rem;
+}
+
+.admin-toolbar {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+}
+
+.admin-toolbar .text-input {
+  flex: 1;
+}
+
+.admin-form {
+  background: var(--surface);
+  border-radius: var(--radius);
+  padding: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-form-row .text-input,
+.admin-form-row select {
+  flex: 1;
+}
+
+.admin-select {
+  background: var(--surface2);
+  border: 1.5px solid var(--surface2);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  padding: 14px 16px;
+  outline: none;
+}
+
+.cant-say-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.admin-form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.admin-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--surface2);
+  font-size: 0.9rem;
+}
+
+.admin-table th {
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 1px;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-cant-say-cell {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.admin-row-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-row-actions button {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.admin-row-actions button:hover {
+  background: var(--surface2);
+  color: var(--text);
+}
+
+.admin-row-actions button.danger:hover {
+  color: var(--penalty);
+}
+
+.admin-empty {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 30px;
+}
+
+.admin-pill {
+  display: inline-block;
+  background: var(--surface2);
+  border-radius: 12px;
+  padding: 3px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+
+.admin-toolbar .text-input {
+  width: 300px;
+  min-width: 300px;
+  background: var(--surface2);
+  border: 2px solid rgba(255, 255, 255, .12);
+  border-radius: 12px;
+}
+
+.admin-toolbar input[type="search"],
+.admin-toolbar .text-input {
+  background: var(--surface2);
+  border: 2px solid rgba(255, 255, 255, .12);
+  color: var(--text);
+}
+
+.admin-toolbar input[type="search"]:focus,
+.admin-toolbar .text-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 78, 109, .15);
 }

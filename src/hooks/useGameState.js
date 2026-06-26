@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { cards, shuffleCards } from '../data/cards';
 
 export const SCREENS = {
   HOME: 'home',
@@ -12,7 +11,21 @@ export const SCREENS = {
 
 const TURN_DURATION = 60; // seconds
 
-export function useGameState() {
+// Deck size scales with points-to-win so a 5-point game doesn't drag on
+// with leftover unseen cards, and a 20-point game still has enough fresh
+// material to avoid repeats. Cap tops out at 30 — past that point, more
+// cards stops adding anything since the game just runs longer rounds, not
+// more variety per round.
+function deckSizeForTarget(target) {
+  if (target <= 5) return 20;
+  if (target <= 15) return 25; // covers 10 and 15
+  return 30; // 20+
+}
+
+/**
+ * @param {(categories: string[]) => Array} buildDeck - from useCards().buildDeck
+ */
+export function useGameState(buildDeck) {
   const [screen, setScreen] = useState(SCREENS.HOME);
   const [teams, setTeams] = useState([
     { name: 'Team 1', score: 0 },
@@ -25,6 +38,7 @@ export function useGameState() {
   const [timerRunning, setTimerRunning] = useState(false);
   const [roundResults, setRoundResults] = useState([]); // {card, result: 'correct'|'skip'|'penalty'}
   const [targetScore, setTargetScore] = useState(10);
+  const [selectedCategories, setSelectedCategories] = useState([]); // [] = all categories
   const timerRef = useRef(null);
 
   // ── Timer ──────────────────────────────────────────────────────────────────
@@ -38,22 +52,26 @@ export function useGameState() {
   }, [timerRunning, timeLeft]);
 
   // ── Actions ────────────────────────────────────────────────────────────────
-  const startGame = useCallback((teamNames, target) => {
-    setTeams(teamNames.map((name) => ({ name, score: 0 })));
-    setTargetScore(target);
-    const enriched = cards.map((card) => {
-      const wordParts = card.safeWord.toLowerCase().split(' ').filter((w) => w.length > 2);
-      const allForbidden = [...new Set([...card.cantSay, ...wordParts])];
-      return { ...card, cantSay: allForbidden };
-    });
-    setDeck(shuffleCards(enriched)); setCurrentCardIndex(0);
-    setCurrentTeamIndex(0);
-    setScreen(SCREENS.PASS_DEVICE);
-  }, []);
+  const startGame = useCallback(
+    (teamNames, target, categories = []) => {
+      setTeams(teamNames.map((name) => ({ name, score: 0 })));
+      setTargetScore(target);
+      setSelectedCategories(categories);
+      const fullPool = buildDeck(categories);
+      setDeck(fullPool.slice(0, deckSizeForTarget(target)));
+      setCurrentCardIndex(0);
+      setCurrentTeamIndex(0);
+      setScreen(SCREENS.PASS_DEVICE);
+    },
+    [buildDeck]
+  );
 
   const startTurn = useCallback(() => {
     setRoundResults([]);
-    setCurrentCardIndex(0); // always start from 0 for each turn
+    // currentCardIndex is intentionally NOT reset here — the deck is shared
+    // across the whole game, so each turn picks up where the last one left
+    // off. This is what makes "no repeats within a game" work: once a card
+    // is drawn by any team, it's gone for the rest of the game.
     setTimeLeft(TURN_DURATION);
     setTimerRunning(true);
     setScreen(SCREENS.PLAYING);
@@ -125,19 +143,20 @@ export function useGameState() {
     setRoundResults([]);
     setTimerRunning(false);
     setTimeLeft(TURN_DURATION);
+    setSelectedCategories([]);
   }, []);
 
-  const initGuestGame = useCallback((teamNames, target) => {
-    setTeams(teamNames.map((name) => ({ name, score: 0 })));
-    setTargetScore(target);
-    const enriched = cards.map((card) => {
-      const wordParts = card.safeWord.toLowerCase().split(' ').filter((w) => w.length > 2);
-      const allForbidden = [...new Set([...card.cantSay, ...wordParts])];
-      return { ...card, cantSay: allForbidden };
-    });
-    setDeck(shuffleCards(enriched));
-    setCurrentCardIndex(0);
-  }, []);
+  const initGuestGame = useCallback(
+    (teamNames, target, categories = []) => {
+      setTeams(teamNames.map((name) => ({ name, score: 0 })));
+      setTargetScore(target);
+      setSelectedCategories(categories);
+      const fullPool = buildDeck(categories);
+      setDeck(fullPool.slice(0, deckSizeForTarget(target)));
+      setCurrentCardIndex(0);
+    },
+    [buildDeck]
+  );
 
   const currentCard = deck[currentCardIndex] ?? null;
   const currentTeam = teams[currentTeamIndex];
@@ -161,6 +180,7 @@ export function useGameState() {
     timerRunning,
     roundResults,
     targetScore,
+    selectedCategories,
     TURN_DURATION,
     currentCardIndex,
     deck,
@@ -173,7 +193,6 @@ export function useGameState() {
     endTurn,
     confirmRoundResults,
     resetGame,
-    syncFromRemote,
     initGuestGame,
   };
 }

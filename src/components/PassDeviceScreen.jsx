@@ -11,7 +11,6 @@ export default function PassDeviceScreen({ currentTeam, teams, onReady }) {
           </div>
         ))}
       </div>
-
       <div className="pass-prompt">
         <div className="pass-icon">📱</div>
         <h2>Pass the device to</h2>
@@ -22,7 +21,6 @@ export default function PassDeviceScreen({ currentTeam, teams, onReady }) {
           Don't say the Can't Say words!
         </p>
       </div>
-
       <button className="btn btn-primary btn-xl" onClick={onReady}>
         We're Ready — Start!
       </button>

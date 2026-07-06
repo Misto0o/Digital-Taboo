@@ -41,7 +41,7 @@ function GameApp() {
   const { isHost } = room;
   const remoteTeamIndex = room.roomState?.currentTeamIndex ?? game.currentTeamIndex;
   const isLocalOnly = !room.roomCode;
-  const isActivePlayer = room.roomState?.activePlayer === (isHost ? 'host' : 'guest');
+  const isActivePlayer = isLocalOnly || room.roomState?.activePlayer === (isHost ? 'host' : 'guest');
   const [localScreen, setLocalScreen] = useState('room');
 
   const activeScreen = game.screen !== SCREENS.HOME ? game.screen : localScreen;

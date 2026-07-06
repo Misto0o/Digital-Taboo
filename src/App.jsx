@@ -27,11 +27,6 @@ function GuestOverlay() {
   );
 }
 
-// Simple client-side routing: visiting /admin shows the card manager
-// instead of the game. No router library needed for one extra route.
-// This check happens once at module scope (the pathname doesn't change
-// during a page's lifetime), so it's safe to use to pick which component
-// tree mounts, without violating Rules of Hooks inside either one.
 const isAdminRoute = typeof window !== 'undefined' && window.location.pathname === '/admin';
 
 function GameApp() {
@@ -39,7 +34,6 @@ function GameApp() {
   const game = useGameState(buildDeck);
   const room = useRoom();
   const { isHost } = room;
-  const remoteTeamIndex = room.roomState?.currentTeamIndex ?? game.currentTeamIndex;
   const isLocalOnly = !room.roomCode;
   const isActivePlayer = isLocalOnly || room.roomState?.activePlayer === (isHost ? 'host' : 'guest');
   const [localScreen, setLocalScreen] = useState('room');
@@ -49,8 +43,6 @@ function GameApp() {
   useEffect(() => {
     if (!isHost && room.roomState) {
       const guestIsActive = room.roomState.activePlayer === 'guest';
-
-      // init deck on first join if needed
       if (game.deck?.length === 0 && room.roomState.teams) {
         game.initGuestGame(
           room.roomState.teams.map((t) => t.name),
@@ -58,11 +50,7 @@ function GameApp() {
           room.roomState.selectedCategories ?? []
         );
       }
-
-      // if it's the guest's turn, don't sync anything — they drive their own state
       if (guestIsActive) return;
-
-      // only sync when host is active
       game.syncFromRemote(room.roomState);
     }
   }, [room.roomState]);
@@ -114,8 +102,20 @@ function GameApp() {
 
   const handleCreateRoom = () => setLocalScreen(SCREENS.SETUP);
 
+  // Solo play: goes straight to setup, no Firebase room created.
+  // isLocalOnly stays true the whole game so isActivePlayer is always true,
+  // meaning both "teams" are controlled by the same device uninterrupted.
+  const handleSoloPlay = () => setLocalScreen(SCREENS.SETUP);
+
   const handleStartGame = async (teamNames, target, selectedCategories) => {
     game.startGame(teamNames, target, selectedCategories);
+
+    // Solo mode — no room code means no Firebase, just play
+    if (isLocalOnly) {
+      setLocalScreen(SCREENS.HOME);
+      return;
+    }
+
     const code = await room.createRoom({
       screen: SCREENS.PASS_DEVICE,
       teams: teamNames.map((name) => ({ name, score: 0 })),
@@ -124,7 +124,7 @@ function GameApp() {
       currentCardIndex: 0,
       targetScore: target,
       selectedCategories,
-      activePlayer: 'host', // team 1 always goes first
+      activePlayer: 'host',
     });
     setLocalScreen(SCREENS.HOME);
     alert(`Your room code is: ${code}\nShare this with your friend!`);
@@ -132,12 +132,9 @@ function GameApp() {
 
   const handleJoinRoom = async (code) => {
     const joined = await room.joinRoom(code);
-    if (joined) {
-      // guest needs their own deck and game initialized
-      // we'll get team names from Firestore on first sync
-      setLocalScreen(SCREENS.HOME);
-    }
+    if (joined) setLocalScreen(SCREENS.HOME);
   };
+
   const handleReset = async () => {
     await room.deleteRoom();
     game.resetGame();
@@ -152,6 +149,7 @@ function GameApp() {
         <RoomScreen
           onCreateRoom={handleCreateRoom}
           onJoinRoom={handleJoinRoom}
+          onSoloPlay={handleSoloPlay}
           error={room.error}
         />
       )}
@@ -211,10 +209,6 @@ function GameApp() {
 }
 
 export default function App() {
-  // No hooks here — just picks which tree to mount. GameApp and AdminRoute
-  // each own their own hooks internally, so neither violates Rules of Hooks.
-  if (isAdminRoute) {
-    return <AdminRoute />;
-  }
+  if (isAdminRoute) return <AdminRoute />;
   return <GameApp />;
 }

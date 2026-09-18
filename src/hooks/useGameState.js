@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { track } from '../lib/analytics';
 
 export const SCREENS = {
   HOME: 'home',
@@ -9,39 +10,40 @@ export const SCREENS = {
   GAME_OVER: 'game_over',
 };
 
+/**
+ * How this game is being played. This is tracked explicitly rather than
+ * inferred from whether a room code exists — inferring it was the cause of
+ * a bug where "Create Room" silently behaved like solo play and never
+ * actually created a room, so nobody could join.
+ */
+export const MODES = {
+  SINGLE: 'single', // one player, one 60s turn, high score
+  PASS: 'pass',     // one device, 2-4 teams, physically passed around
+  HOST: 'host',     // online, this device controls team 0
+  GUEST: 'guest',   // online, this device controls team 1
+};
+
 const TURN_DURATION = 60; // seconds
 
-// Deck size scales with points-to-win so a 5-point game doesn't drag on
-// with leftover unseen cards, and a 20-point game still has enough fresh
-// material to avoid repeats. Cap tops out at 30 — past that point, more
-// cards stops adding anything since the game just runs longer rounds, not
-// more variety per round.
-function deckSizeForTarget(target) {
-  if (target <= 5) return 20;
-  if (target <= 15) return 25; // covers 10 and 15
-  return 30; // 20+
-}
-
-/**
- * @param {(categories: string[]) => Array} buildDeck - from useCards().buildDeck
- */
-export function useGameState(buildDeck) {
+export function useGameState(buildDeck, buildDeckFromIds) {
   const [screen, setScreen] = useState(SCREENS.HOME);
-  const [teams, setTeams] = useState([
-    { name: 'Team 1', score: 0 },
-    { name: 'Team 2', score: 0 },
-  ]);
+  const [mode, setMode] = useState(null);
+  const [teams, setTeams] = useState([]);
   const [currentTeamIndex, setCurrentTeamIndex] = useState(0);
   const [deck, setDeck] = useState([]);
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [timeLeft, setTimeLeft] = useState(TURN_DURATION);
   const [timerRunning, setTimerRunning] = useState(false);
-  const [roundResults, setRoundResults] = useState([]); // {card, result: 'correct'|'skip'|'penalty'}
+  const [roundResults, setRoundResults] = useState([]);
   const [targetScore, setTargetScore] = useState(10);
-  const [selectedCategories, setSelectedCategories] = useState([]); // [] = all categories
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [isTiebreak, setIsTiebreak] = useState(false);
   const timerRef = useRef(null);
 
-  // ── Timer ──────────────────────────────────────────────────────────────────
+  const isSingle = mode === MODES.SINGLE;
+  const isOnline = mode === MODES.HOST || mode === MODES.GUEST;
+
+  // ── Timer ──────────────────────────────────────────────────────────────
   useEffect(() => {
     if (timerRunning && timeLeft > 0) {
       timerRef.current = setTimeout(() => setTimeLeft((t) => t - 1), 1000);
@@ -51,47 +53,77 @@ export function useGameState(buildDeck) {
     return () => clearTimeout(timerRef.current);
   }, [timerRunning, timeLeft]);
 
-  // ── Actions ────────────────────────────────────────────────────────────────
+  // ── Start ──────────────────────────────────────────────────────────────
+  /**
+   * Starts a game. Returns the deck's card ids so the caller can push them
+   * to Firestore — online guests rebuild the identical deck from this.
+   */
   const startGame = useCallback(
-    (teamNames, target, categories = []) => {
-      setTeams(teamNames.map((name) => ({ name, score: 0 })));
+    (teamNames, target, categories = [], gameMode = MODES.PASS) => {
+      const names = gameMode === MODES.SINGLE ? ['You'] : teamNames;
+
+      setMode(gameMode);
+      setTeams(names.map((name) => ({ name, score: 0 })));
       setTargetScore(target);
       setSelectedCategories(categories);
-      const fullPool = buildDeck(categories);
-      setDeck(fullPool.slice(0, deckSizeForTarget(target)));
+      setIsTiebreak(false);
+
+      // The deck is the FULL shuffled pool, not a fixed-size slice. A capped
+      // deck let one team burn every card in a single turn (skips consume
+      // cards but score nothing), leaving the next team with "No more cards"
+      // and a game that could never reach its target — an infinite loop.
+      // With the full pool, games end by target score as designed, and true
+      // exhaustion (200+ cards played) is handled as a game-over below.
+      const newDeck = buildDeck(categories);
+
+      setDeck(newDeck);
       setCurrentCardIndex(0);
       setCurrentTeamIndex(0);
       setScreen(SCREENS.PASS_DEVICE);
+
+      return newDeck.map((c) => c.id);
     },
     [buildDeck]
   );
 
+  /**
+   * Online guest: rebuild the host's exact deck from the ids they pushed,
+   * so both devices are looking at the same cards in the same order.
+   */
+  const initGuestGame = useCallback(
+    (teamNames, target, categories = [], deckIds = []) => {
+      setMode(MODES.GUEST);
+      setTeams(teamNames.map((name) => ({ name, score: 0 })));
+      setTargetScore(target);
+      setSelectedCategories(categories);
+      setDeck(buildDeckFromIds(deckIds));
+      setCurrentCardIndex(0);
+    },
+    [buildDeckFromIds]
+  );
+
+  // ── Turn ───────────────────────────────────────────────────────────────
   const startTurn = useCallback(() => {
     setRoundResults([]);
-    // currentCardIndex is intentionally NOT reset here — the deck is shared
-    // across the whole game, so each turn picks up where the last one left
-    // off. This is what makes "no repeats within a game" work: once a card
-    // is drawn by any team, it's gone for the rest of the game.
+    // currentCardIndex is deliberately NOT reset — the deck is shared across
+    // the whole game, so each turn continues where the last left off. That's
+    // what guarantees no card repeats within a game.
     setTimeLeft(TURN_DURATION);
     setTimerRunning(true);
     setScreen(SCREENS.PLAYING);
   }, []);
 
-  const handleCorrect = useCallback(() => {
-    setRoundResults((r) => [...r, { card: deck[currentCardIndex], result: 'correct' }]);
-    setCurrentCardIndex((i) => i + 1);
-  }, [deck, currentCardIndex]);
+  const recordResult = useCallback(
+    (result) => {
+      setRoundResults((r) => [...r, { card: deck[currentCardIndex], result }]);
+      setCurrentCardIndex((i) => i + 1);
+    },
+    [deck, currentCardIndex]
+  );
 
-  const handleSkip = useCallback(() => {
-    setRoundResults((r) => [...r, { card: deck[currentCardIndex], result: 'skip' }]);
-    setCurrentCardIndex((i) => i + 1);
-  }, [deck, currentCardIndex]);
-
-  const handlePenalty = useCallback(() => {
-    // Said a forbidden word — lose a point
-    setRoundResults((r) => [...r, { card: deck[currentCardIndex], result: 'penalty' }]);
-    setCurrentCardIndex((i) => i + 1);
-  }, [deck, currentCardIndex]);
+  const handleCorrect = useCallback(() => recordResult('correct'), [recordResult]);
+  const handleSkip = useCallback(() => recordResult('skip'), [recordResult]);
+  const handlePenalty = useCallback(() => recordResult('penalty'), [recordResult]);
 
   const endTurn = useCallback(() => {
     setTimerRunning(false);
@@ -99,6 +131,7 @@ export function useGameState(buildDeck) {
     setScreen(SCREENS.ROUND_END);
   }, []);
 
+  // ── Round resolution ───────────────────────────────────────────────────
   const confirmRoundResults = useCallback(() => {
     const earned = roundResults.filter((r) => r.result === 'correct').length;
     const penalized = roundResults.filter((r) => r.result === 'penalty').length;
@@ -109,34 +142,85 @@ export function useGameState(buildDeck) {
     );
     setTeams(updatedTeams);
 
+    // Single player: one turn and you're done. No opponent, no target.
+    if (isSingle) {
+      track('single_game_completed', {
+        score: updatedTeams[0].score,
+        cardsSeen: currentCardIndex,
+        categories: selectedCategories.length ? selectedCategories : ['All Categories'],
+      });
+      setScreen(SCREENS.GAME_OVER);
+      return;
+    }
+
     const nextTeam = (currentTeamIndex + 1) % teams.length;
-    const isEndOfRound = nextTeam === 0; // back to team 1 = full round complete
+    const isEndOfRound = nextTeam === 0; // wrapped back to team 1 = everyone played
+    const deckExhausted = currentCardIndex >= deck.length;
 
     if (isEndOfRound) {
-      // check for winner only after all teams have played
-      const winner = updatedTeams.find((t) => t.score >= targetScore);
-      if (winner) {
-        // tiebreak — if multiple teams hit target, whoever has highest score wins
-        const maxScore = Math.max(...updatedTeams.map((t) => t.score));
-        const tied = updatedTeams.filter((t) => t.score === maxScore);
-        if (tied.length > 1) {
-          // tiebreak round — don't end yet, keep playing
+      // Only check for a winner once every team has had an equal number of
+      // turns — otherwise team 1 could win before team 2 ever answers.
+      const maxScore = Math.max(...updatedTeams.map((t) => t.score));
+      const atTarget = updatedTeams.filter((t) => t.score >= targetScore);
+
+      if (atTarget.length > 0) {
+        const leaders = updatedTeams.filter((t) => t.score === maxScore);
+
+        if (leaders.length > 1 && !deckExhausted) {
+          // Two or more tied at the top — play another full round.
+          // (Unless there are no cards left to break the tie with.)
+          setIsTiebreak(true);
           setCurrentTeamIndex(nextTeam);
           setScreen(SCREENS.PASS_DEVICE);
           return;
         }
+
+        track('game_completed', {
+          targetScore,
+          winningScore: maxScore,
+          cardsUsed: currentCardIndex,
+          teamCount: teams.length,
+          wasTiebreak: isTiebreak,
+          categories: selectedCategories.length ? selectedCategories : ['All Categories'],
+        });
         setScreen(SCREENS.GAME_OVER);
         return;
       }
     }
 
+    // No cards left and nobody won by target: end the game now on current
+    // scores instead of looping teams through empty turns forever.
+    if (deckExhausted) {
+      track('game_completed', {
+        targetScore,
+        winningScore: Math.max(...updatedTeams.map((t) => t.score)),
+        cardsUsed: currentCardIndex,
+        teamCount: teams.length,
+        reason: 'deck_exhausted',
+        categories: selectedCategories.length ? selectedCategories : ['All Categories'],
+      });
+      setScreen(SCREENS.GAME_OVER);
+      return;
+    }
+
     setCurrentTeamIndex(nextTeam);
     setScreen(SCREENS.PASS_DEVICE);
-  }, [roundResults, teams, currentTeamIndex, targetScore]);
+  }, [
+    roundResults,
+    deck,
+    teams,
+    currentTeamIndex,
+    targetScore,
+    currentCardIndex,
+    selectedCategories,
+    isSingle,
+    isTiebreak,
+  ]);
 
   const resetGame = useCallback(() => {
     setScreen(SCREENS.HOME);
-    setTeams([{ name: 'Team 1', score: 0 }, { name: 'Team 2', score: 0 }]);
+    setMode(null);
+    setTeams([]);
     setCurrentTeamIndex(0);
     setDeck([]);
     setCurrentCardIndex(0);
@@ -144,48 +228,50 @@ export function useGameState(buildDeck) {
     setTimerRunning(false);
     setTimeLeft(TURN_DURATION);
     setSelectedCategories([]);
+    setIsTiebreak(false);
   }, []);
 
-  const initGuestGame = useCallback(
-    (teamNames, target, categories = []) => {
-      setTeams(teamNames.map((name) => ({ name, score: 0 })));
-      setTargetScore(target);
-      setSelectedCategories(categories);
-      const fullPool = buildDeck(categories);
-      setDeck(fullPool.slice(0, deckSizeForTarget(target)));
-      setCurrentCardIndex(0);
-    },
-    [buildDeck]
-  );
+  // ── Online sync ────────────────────────────────────────────────────────
+  /**
+   * Mirror state pushed by whichever device is currently active.
+   * The card index IS synced now: both devices share one deck, so the
+   * inactive device must follow along rather than tracking its own position.
+   */
+  const syncFromRemote = useCallback((remote) => {
+    if (remote.screen) setScreen(remote.screen);
+    if (remote.teams) setTeams(remote.teams);
+    if (remote.currentTeamIndex !== undefined) setCurrentTeamIndex(remote.currentTeamIndex);
+    if (remote.cardIndex !== undefined) setCurrentCardIndex(remote.cardIndex);
+    if (remote.roundResults) setRoundResults(remote.roundResults);
+    if (remote.targetScore) setTargetScore(remote.targetScore);
+    if (remote.isTiebreak !== undefined) setIsTiebreak(remote.isTiebreak);
+  }, []);
 
   const currentCard = deck[currentCardIndex] ?? null;
-  const currentTeam = teams[currentTeamIndex];
-
-  const syncFromRemote = useCallback((remoteState) => {
-    if (remoteState.screen) setScreen(remoteState.screen);
-    if (remoteState.teams) setTeams(remoteState.teams);
-    if (remoteState.currentTeamIndex !== undefined) setCurrentTeamIndex(remoteState.currentTeamIndex);
-    if (remoteState.roundResults) setRoundResults(remoteState.roundResults);
-    if (remoteState.targetScore) setTargetScore(remoteState.targetScore);
-    // currentCardIndex intentionally NOT synced — each player manages their own
-  }, []);
+  const currentTeam = teams[currentTeamIndex] ?? null;
+  const cardsRemaining = Math.max(0, deck.length - currentCardIndex);
 
   return {
     screen,
+    mode,
+    isSingle,
+    isOnline,
     teams,
     currentTeam,
     currentTeamIndex,
     currentCard,
+    cardsRemaining,
     timeLeft,
     timerRunning,
     roundResults,
     targetScore,
     selectedCategories,
+    isTiebreak,
     TURN_DURATION,
     currentCardIndex,
     deck,
-    syncFromRemote,
     startGame,
+    initGuestGame,
     startTurn,
     handleCorrect,
     handleSkip,
@@ -193,6 +279,6 @@ export function useGameState(buildDeck) {
     endTurn,
     confirmRoundResults,
     resetGame,
-    initGuestGame,
+    syncFromRemote,
   };
 }

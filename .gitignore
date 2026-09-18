@@ -4,6 +4,4 @@ dist
 .env.local
 *.log
 .DS_Store
-firestore.rules
-supabase_schema.sql
-cards_source.tsv
+empty

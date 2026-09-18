@@ -12,8 +12,8 @@ export default defineConfig({
         name: 'SafeWord',
         short_name: 'SafeWord',
         description: 'Fast-paced team word guessing game',
-        theme_color: '#0f0f1a',
-        background_color: '#0f0f1a',
+        theme_color: '#070d14',
+        background_color: '#070d14',
         display: 'standalone',
         icons: [
           { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },

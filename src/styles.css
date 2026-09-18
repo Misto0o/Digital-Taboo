@@ -1,18 +1,60 @@
 /* ── Design Tokens ─────────────────────────────────────────────────── */
+/*
+  Brand palette sampled directly from the SafeWord box artwork.
+
+  Print and screen need different values: the box uses deep, saturated
+  colors because they're printed under white text on a physical surface.
+  Straight on a dark UI those read as muddy and fail contrast, so the
+  screen versions below keep the same hue but are brightened. The original
+  print value is noted beside each one.
+*/
 :root {
-  --bg: #0f0f1a;
-  --surface: #1a1a2e;
-  --surface2: #252540;
-  --accent: #ff4f6d;
-  --accent2: #ffd166;
-  --correct: #06d6a0;
-  --skip: #8ecae6;
-  --penalty: #ff4f6d;
-  --text: #f0f0ff;
-  --text-muted: #8888aa;
+  --bg: #070d14;
+  /* near-black navy, matches the box ground */
+  --surface: #0f1a26;
+  --surface2: #1c2b3a;
+
+  --accent: #9ac417;
+  /* SafeWord green   (box #7da60a) */
+  --accent-deep: #375d03;
+  /* deep green panel (box #375d03) */
+  --accent2: #f0b71f;
+  /* SafeWord gold    (box #eab402) */
+
+  /* Text that sits ON a bright accent background. Never use white here —
+     white on the brand green fails contrast badly. */
+  --on-accent: #0a1408;
+
+  --correct: #9ac417;
+  /* brand green */
+  --skip: #6bb0e8;
+  /* box navy #02234e, lifted for screen */
+  --penalty: #d4341c;
+  /* box red  #981006, lifted for screen */
+
+  --text: #f2efe9;
+  /* warm off-white, matches the wordmark */
+  --text-muted: #8d9aa8;
+
+  /* Category colors, taken from the card headers on the box front.
+     Used to tie digital categories back to the physical game. */
+  --cat-loto: #c4241a;
+  /* Lock Out/Tag Out   (box #981006) */
+  --cat-hazcom: #2f6fb0;
+  /* Hazard Comm        (box #02234e) */
+  --cat-machine: #5f9e0f;
+  /* Machine Guarding   (box #375d03) */
+  --cat-slips: #e06a12;
+  /* Slips/Trips/Falls  (box #c34f02) */
+  --cat-ppe: #7a4fc4;
+  /* PPE                (box #36205d) */
+
   --radius: 16px;
   --radius-sm: 8px;
-  --font-display: 'Georgia', serif;
+  /* The box wordmark is a heavy condensed sans, not a serif — this stack
+     approximates it with no webfont dependency. See the note in STATUS.md
+     if SafeWord can supply the actual typeface. */
+  --font-display: 'Arial Black', 'Helvetica Neue', Impact, sans-serif;
   --font-body: 'Trebuchet MS', 'Helvetica Neue', sans-serif;
 }
 
@@ -136,7 +178,7 @@ body,
 
 .btn-primary {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
   width: 100%;
 }
 
@@ -322,7 +364,7 @@ body,
 .score-btn.active {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 /* ── CATEGORY CHIPS (setup screen) ────────────────────────────────────── */
@@ -348,7 +390,7 @@ body,
 .category-chip.active {
   background: var(--accent);
   border-color: var(--accent);
-  color: #fff;
+  color: var(--on-accent);
 }
 
 .category-loading {
@@ -519,7 +561,10 @@ body,
 }
 
 .cant-say-list li {
-  color: var(--accent);
+  /* Red, not the brand green — green now reads as "correct" on the action
+     buttons, and these are the words that cost you a point. This matches
+     the Penalty button, which is what saying one triggers. */
+  color: var(--penalty);
   font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: 1px;
@@ -918,5 +963,219 @@ body,
 .admin-toolbar input[type="search"]:focus,
 .admin-toolbar .text-input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(255, 78, 109, .15);
+  box-shadow: 0 0 0 3px rgba(154, 196, 23, .18);
+}
+
+/* ── FOOTER LINK ───────────────────────────────────────────────────── */
+.footer-link {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-decoration: none;
+  margin-top: 8px;
+  opacity: 0.7;
+}
+
+.footer-link:hover {
+  color: var(--text);
+  opacity: 1;
+}
+
+/* ── BRAND LOCKUP ──────────────────────────────────────────────────── */
+/* Mirrors the box: wordmark, green rule, then "THE SAFETY GAME". */
+.logo-rule {
+  width: 180px;
+  height: 5px;
+  background: var(--accent);
+  border-radius: 3px;
+  margin: 6px auto 0;
+}
+
+.logo-subtitle {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+/* ── MODE PICKER (room screen) ─────────────────────────────────────── */
+.mode-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.mode-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px solid var(--surface2);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  cursor: pointer;
+  text-align: left;
+  font-family: var(--font-body);
+  transition: border-color 0.15s, transform 0.1s;
+}
+
+.mode-btn:active {
+  transform: scale(0.98);
+}
+
+.mode-btn:hover {
+  border-color: var(--accent);
+}
+
+.mode-btn.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.mode-icon {
+  font-size: 1.6rem;
+}
+
+.mode-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mode-text strong {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.mode-text small {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.mode-btn.primary .mode-text strong,
+.mode-btn.primary .mode-text small {
+  color: var(--on-accent);
+}
+
+/* ── TIEBREAK ──────────────────────────────────────────────────────── */
+.tiebreak-banner {
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px solid var(--accent2);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+}
+
+.tiebreak-banner strong {
+  color: var(--accent2);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.8rem;
+}
+
+.tiebreak-banner span {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.tiebreak-pill {
+  background: var(--accent2);
+  color: var(--on-accent);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 5px 14px;
+  border-radius: 20px;
+}
+
+/* ── PASS HANDOFF ──────────────────────────────────────────────────── */
+.pass-handoff {
+  background: var(--surface2);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  max-width: 300px;
+}
+
+/* ── ROOM CODE SHARE ───────────────────────────────────────────────── */
+.room-share {
+  width: 100%;
+  background: var(--surface);
+  border: 1.5px dashed var(--surface2);
+  border-radius: var(--radius);
+  padding: 14px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.room-share-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.room-share-code {
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: 8px;
+  color: var(--accent2);
+}
+
+/* ── WAITING OVERLAY ───────────────────────────────────────────────── */
+.waiting-inner {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 24px;
+}
+
+.waiting-icon {
+  font-size: 3rem;
+}
+
+.waiting-inner h2 {
+  font-size: 1.3rem;
+  color: var(--text);
+}
+
+.waiting-inner p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+/* ── MISC ──────────────────────────────────────────────────────────── */
+.cards-left {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.setup-blurb {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.solo-result-sub {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 300px;
 }

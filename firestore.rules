@@ -1,0 +1,16 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // SafeWord game rooms — anyone with a 4-letter room code can read/write
+    // that specific room. This is intentionally open (no login) since the
+    // game has no accounts; the room code itself is the access control.
+    // Other collections are NOT covered by this rule, so they stay denied.
+    match /rooms/{roomCode} {
+      allow read, write: if true;
+    }
+
+    // Everything else is denied by default (no matching rule = no access).
+  }
+}

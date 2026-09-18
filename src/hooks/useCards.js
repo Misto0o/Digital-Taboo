@@ -98,12 +98,36 @@ export function useCards() {
     [allCards]
   );
 
+  /**
+   * Rebuild a deck in an exact given order, by card id.
+   *
+   * Online multiplayer needs this. Without it, host and guest each shuffle
+   * their own deck independently and end up looking at completely different
+   * cards, and "no repeats in a game" only holds per-device. The host
+   * shuffles once, pushes the resulting id order to Firestore, and the guest
+   * reconstructs the identical deck from those ids.
+   *
+   * Ids that aren't found locally are skipped rather than throwing — that can
+   * happen if a card was hidden in the admin panel mid-game.
+   */
+  const buildDeckFromIds = useCallback(
+    (ids = []) => {
+      const byId = new Map(allCards.map((c) => [c.id, c]));
+      return ids
+        .map((id) => byId.get(id))
+        .filter(Boolean)
+        .map(enrichCard);
+    },
+    [allCards]
+  );
+
   return {
     allCards,
     categories,
     loading,
     error,
     buildDeck,
+    buildDeckFromIds,
     refetch: fetchCards,
   };
 }

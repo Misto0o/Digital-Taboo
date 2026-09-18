@@ -5,6 +5,7 @@ export default function PlayingScreen({
   timeLeft,
   turnDuration,
   currentTeam,
+  cardsRemaining,
   onCorrect,
   onSkip,
   onPenalty,
@@ -32,7 +33,10 @@ export default function PlayingScreen({
         />
       </div>
       <div className={`timer-display ${timerWarning ? 'warning' : ''}`}>
-        {timeLeft}s — {currentTeam.name}
+        {timeLeft}s — {currentTeam?.name}
+        {cardsRemaining !== undefined && (
+          <span className="cards-left"> · {cardsRemaining} left</span>
+        )}
       </div>
       {/* Card */}
       <div className="card">
@@ -41,7 +45,7 @@ export default function PlayingScreen({
           <span>Can't Say</span>
         </div>
         <ul className="cant-say-list">
-          {currentCard.cantSay.map((word, i) => (
+          {(currentCard.cantSay ?? []).map((word, i) => (
             <li key={i}>{word.toUpperCase()}</li>
           ))}
         </ul>

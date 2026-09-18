@@ -1,0 +1,201 @@
+Category	Difficulty	Card	CantSay1	CantSay2	CantSay3	CantSay4	CantSay5
+Category	Beginner	Lockout/Tagout	Lockout	Tagout	Safety	Workplace	Training
+Category	Beginner	Authorized Employee	Authorized	Employee	Safety	Workplace	Training
+Category	Beginner	Affected Employee	Affected	Employee	Safety	Workplace	Training
+Category	Beginner	Stored Energy	Stored	Energy	Safety	Workplace	Training
+Category	Beginner	Verification	Verification	Safety	Workplace	Training	Hazard
+Category	Beginner	Group Lockout	Group	Lockout	Safety	Workplace	Training
+Category	Beginner	Lock Box	Lock	Box	Safety	Workplace	Training
+Lockout/Tagout	Beginner	Disconnect Switch	Disconnect	Switch	Safety	Workplace	Training
+Lockout/Tagout	Beginner	Zero Energy State	Zero	Energy	State	Safety	Workplace
+Lockout/Tagout	Beginner	Unexpected Startup	Unexpected	Startup	Safety	Workplace	Training
+Lockout/Tagout	Intermediate	Conveyor	Conveyor	Safety	Workplace	Training	Hazard
+Lockout/Tagout	Intermediate	Coffee Roaster	Coffee	Roaster	Safety	Workplace	Training
+Lockout/Tagout	Intermediate	Packaging Machine	Packaging	Machine	Safety	Workplace	Training
+Lockout/Tagout	Intermediate	Circuit Breaker	Circuit	Breaker	Safety	Workplace	Training
+Lockout/Tagout	Intermediate	Hydraulic Press	Hydraulic	Press	Safety	Workplace	Training
+Lockout/Tagout	Intermediate	Pneumatic Line	Pneumatic	Line	Safety	Workplace	Training
+Lockout/Tagout	Intermediate	Mixer	Mixer	Safety	Workplace	Training	Hazard
+Lockout/Tagout	Intermediate	Valve	Valve	Safety	Workplace	Training	Hazard
+Lockout/Tagout	Intermediate	Gearbox	Gearbox	Safety	Workplace	Training	Hazard
+Lockout/Tagout	Intermediate	Motor	Motor	Safety	Workplace	Training	Hazard
+Lockout/Tagout	Advanced	Jam Clearing	Jam	Clearing	Safety	Workplace	Training
+Lockout/Tagout	Advanced	Equipment Repair	Equipment	Repair	Safety	Workplace	Training
+Lockout/Tagout	Advanced	Bypassed Interlock	Bypassed	Interlock	Safety	Workplace	Training
+Lockout/Tagout	Advanced	Contractor Lockout	Contractor	Lockout	Safety	Workplace	Training
+Lockout/Tagout	Advanced	Energy Isolation Device	Energy	Isolation	Device	Safety	Workplace
+Hazard Communication	Beginner	Safety Data Sheet	Safety	Data	Sheet	Safety	Workplace
+Hazard Communication	Beginner	Pictogram	Pictogram	Safety	Workplace	Training	Hazard
+Hazard Communication	Beginner	Signal Word	Signal	Word	Safety	Workplace	Training
+Hazard Communication	Beginner	Secondary Container	Secondary	Container	Safety	Workplace	Training
+Hazard Communication	Beginner	Chemical Inventory	Chemical	Inventory	Safety	Workplace	Training
+Hazard Communication	Beginner	GHS	GHS	Safety	Workplace	Training	Hazard
+Hazard Communication	Beginner	Flammable	Flammable	Safety	Workplace	Training	Hazard
+Hazard Communication	Beginner	Corrosive	Corrosive	Safety	Workplace	Training	Hazard
+Hazard Communication	Beginner	Toxic	Toxic	Safety	Workplace	Training	Hazard
+Hazard Communication	Beginner	Chemical Spill	Chemical	Spill	Safety	Workplace	Training
+Hazard Communication	Intermediate	Solvent	Solvent	Safety	Workplace	Training	Hazard
+Hazard Communication	Intermediate	Degreaser	Degreaser	Safety	Workplace	Training	Hazard
+Hazard Communication	Intermediate	Sanitizer	Sanitizer	Safety	Workplace	Training	Hazard
+Hazard Communication	Intermediate	Cleaning Chemical	Cleaning	Chemical	Safety	Workplace	Training
+Hazard Communication	Intermediate	Chemical Drum	Chemical	Drum	Safety	Workplace	Training
+Hazard Communication	Intermediate	Aerosol	Aerosol	Safety	Workplace	Training	Hazard
+Hazard Communication	Intermediate	Lubricant	Lubricant	Safety	Workplace	Training	Hazard
+Hazard Communication	Intermediate	Acetone	Acetone	Safety	Workplace	Training	Hazard
+Hazard Communication	Intermediate	Storage Cabinet	Storage	Cabinet	Safety	Workplace	Training
+Hazard Communication	Intermediate	Spray Bottle	Spray	Bottle	Safety	Workplace	Training
+Hazard Communication	Advanced	Eye Exposure	Eye	Exposure	Safety	Workplace	Training
+Hazard Communication	Advanced	Skin Contact	Skin	Contact	Safety	Workplace	Training
+Hazard Communication	Advanced	Unlabeled Container	Unlabeled	Container	Safety	Workplace	Training
+Hazard Communication	Advanced	Mixing Chemicals	Mixing	Chemicals	Safety	Workplace	Training
+Hazard Communication	Advanced	Hazard Classification	Hazard	Classification	Safety	Workplace	Training
+Respiratory Protection	Beginner	Respirator	Respirator	Safety	Workplace	Training	Hazard
+Respiratory Protection	Beginner	Fit Test	Fit	Test	Safety	Workplace	Training
+Respiratory Protection	Beginner	Medical Evaluation	Medical	Evaluation	Safety	Workplace	Training
+Respiratory Protection	Beginner	N95	N95	Safety	Workplace	Training	Hazard
+Respiratory Protection	Beginner	Cartridge	Cartridge	Safety	Workplace	Training	Hazard
+Respiratory Protection	Beginner	User Seal Check	User	Seal	Check	Safety	Workplace
+Respiratory Protection	Beginner	PAPR	PAPR	Safety	Workplace	Training	Hazard
+Respiratory Protection	Beginner	Facial Hair	Facial	Hair	Safety	Workplace	Training
+Respiratory Protection	Beginner	Exposure Assessment	Exposure	Assessment	Safety	Workplace	Training
+Respiratory Protection	Beginner	Dust Collector	Dust	Collector	Safety	Workplace	Training
+Respiratory Protection	Intermediate	Coffee Dust	Coffee	Dust	Safety	Workplace	Training
+Respiratory Protection	Intermediate	Welding Fume	Welding	Fume	Safety	Workplace	Training
+Respiratory Protection	Intermediate	Grinding Operation	Grinding	Operation	Safety	Workplace	Training
+Respiratory Protection	Intermediate	Air Monitoring	Air	Monitoring	Safety	Workplace	Training
+Respiratory Protection	Intermediate	Ventilation	Ventilation	Safety	Workplace	Training	Hazard
+Respiratory Protection	Intermediate	Dust Exposure	Dust	Exposure	Safety	Workplace	Training
+Respiratory Protection	Intermediate	Silica	Silica	Safety	Workplace	Training	Hazard
+Respiratory Protection	Intermediate	Chemical Vapor	Chemical	Vapor	Safety	Workplace	Training
+Respiratory Protection	Intermediate	Airborne Contaminant	Airborne	Contaminant	Safety	Workplace	Training
+Respiratory Protection	Intermediate	Assigned Protection Factor	Assigned	Protection	Factor	Safety	Workplace
+Respiratory Protection	Advanced	Poor Fit	Poor	Fit	Safety	Workplace	Training
+Respiratory Protection	Advanced	Cartridge Changeout	Cartridge	Changeout	Safety	Workplace	Training
+Respiratory Protection	Advanced	Respiratory Hazard	Respiratory	Hazard	Safety	Workplace	Training
+Respiratory Protection	Advanced	Overexposure	Overexposure	Safety	Workplace	Training	Hazard
+Respiratory Protection	Advanced	Air Purifying Respirator	Air	Purifying	Respirator	Safety	Workplace
+PPE	Beginner	Safety Glasses	Safety	Glasses	Safety	Workplace	Training
+PPE	Beginner	Face Shield	Face	Shield	Safety	Workplace	Training
+PPE	Beginner	Hearing Protection	Hearing	Protection	Safety	Workplace	Training
+PPE	Beginner	Cut Resistant Gloves	Cut	Resistant	Gloves	Safety	Workplace
+PPE	Beginner	Hard Hat	Hard	Hat	Safety	Workplace	Training
+PPE	Beginner	Steel Toe Shoes	Steel	Toe	Shoes	Safety	Workplace
+PPE	Beginner	High Visibility Vest	High	Visibility	Vest	Safety	Workplace
+PPE	Beginner	PPE Assessment	PPE	Assessment	Safety	Workplace	Training
+PPE	Beginner	PPE Training	PPE	Training	Safety	Workplace	Training
+PPE	Beginner	Arc Flash Suit	Arc	Flash	Suit	Safety	Workplace
+PPE	Intermediate	Safety Shoes	Safety	Shoes	Safety	Workplace	Training
+PPE	Intermediate	Earplugs	Earplugs	Safety	Workplace	Training	Hazard
+PPE	Intermediate	Safety Goggles	Safety	Goggles	Safety	Workplace	Training
+PPE	Intermediate	Welding Hood	Welding	Hood	Safety	Workplace	Training
+PPE	Intermediate	Apron	Apron	Safety	Workplace	Training	Hazard
+PPE	Intermediate	Sleeve Protection	Sleeve	Protection	Safety	Workplace	Training
+PPE	Intermediate	Disposable Gloves	Disposable	Gloves	Safety	Workplace	Training
+PPE	Intermediate	Face Covering	Face	Covering	Safety	Workplace	Training
+PPE	Intermediate	Reflective Clothing	Reflective	Clothing	Safety	Workplace	Training
+PPE	Intermediate	Chemical Gloves	Chemical	Gloves	Safety	Workplace	Training
+PPE	Advanced	Eye Injury	Eye	Injury	Safety	Workplace	Training
+PPE	Advanced	Hand Injury	Hand	Injury	Safety	Workplace	Training
+PPE	Advanced	Noise Exposure	Noise	Exposure	Safety	Workplace	Training
+PPE	Advanced	PPE Violation	PPE	Violation	Safety	Workplace	Training
+PPE	Advanced	Last Line of Defense	Last	Line	of	Defense	Safety
+Machine Guarding	Beginner	Machine Guard	Machine	Guard	Safety	Workplace	Training
+Machine Guarding	Beginner	Point of Operation	Point	of	Operation	Safety	Workplace
+Machine Guarding	Beginner	Nip Point	Nip	Point	Safety	Workplace	Training
+Machine Guarding	Beginner	Interlock	Interlock	Safety	Workplace	Training	Hazard
+Machine Guarding	Beginner	Fixed Guard	Fixed	Guard	Safety	Workplace	Training
+Machine Guarding	Beginner	Emergency Stop	Emergency	Stop	Safety	Workplace	Training
+Machine Guarding	Beginner	Rotating Parts	Rotating	Parts	Safety	Workplace	Training
+Machine Guarding	Beginner	Conveyor Guarding	Conveyor	Guarding	Safety	Workplace	Training
+Machine Guarding	Beginner	Pinch Point	Pinch	Point	Safety	Workplace	Training
+Machine Guarding	Beginner	Entanglement	Entanglement	Safety	Workplace	Training	Hazard
+Machine Guarding	Intermediate	Conveyor	Conveyor	Safety	Workplace	Training	Hazard
+Machine Guarding	Intermediate	Chain Drive	Chain	Drive	Safety	Workplace	Training
+Machine Guarding	Intermediate	Sprocket	Sprocket	Safety	Workplace	Training	Hazard
+Machine Guarding	Intermediate	Pulley	Pulley	Safety	Workplace	Training	Hazard
+Machine Guarding	Intermediate	Fan Blade	Fan	Blade	Safety	Workplace	Training
+Machine Guarding	Intermediate	Packaging Equipment	Packaging	Equipment	Safety	Workplace	Training
+Machine Guarding	Intermediate	Shaft	Shaft	Safety	Workplace	Training	Hazard
+Machine Guarding	Intermediate	Mixer	Mixer	Safety	Workplace	Training	Hazard
+Machine Guarding	Intermediate	Auger	Auger	Safety	Workplace	Training	Hazard
+Machine Guarding	Intermediate	Roller	Roller	Safety	Workplace	Training	Hazard
+Machine Guarding	Advanced	Amputation	Amputation	Safety	Workplace	Training	Hazard
+Machine Guarding	Advanced	Removed Guard	Removed	Guard	Safety	Workplace	Training
+Machine Guarding	Advanced	Bypassed Safety Device	Bypassed	Safety	Device	Safety	Workplace
+Machine Guarding	Advanced	Safeguarding Device	Safeguarding	Device	Safety	Workplace	Training
+Machine Guarding	Advanced	Guard Opening	Guard	Opening	Safety	Workplace	Training
+Powered Industrial Trucks	Beginner	Forklift	Forklift	Safety	Workplace	Training	Hazard
+Powered Industrial Trucks	Beginner	Load Capacity	Load	Capacity	Safety	Workplace	Training
+Powered Industrial Trucks	Beginner	Stability Triangle	Stability	Triangle	Safety	Workplace	Training
+Powered Industrial Trucks	Beginner	Pre-Use Inspection	Pre	Use	Inspection	Safety	Workplace
+Powered Industrial Trucks	Beginner	Seat Belt	Seat	Belt	Safety	Workplace	Training
+Powered Industrial Trucks	Beginner	Pedestrian	Pedestrian	Safety	Workplace	Training	Hazard
+Powered Industrial Trucks	Beginner	Dock Plate	Dock	Plate	Safety	Workplace	Training
+Powered Industrial Trucks	Beginner	Battery Charging	Battery	Charging	Safety	Workplace	Training
+Powered Industrial Trucks	Beginner	Reach Truck	Reach	Truck	Safety	Workplace	Training
+Powered Industrial Trucks	Beginner	Blind Corner	Blind	Corner	Safety	Workplace	Training
+Powered Industrial Trucks	Intermediate	Pallet	Pallet	Safety	Workplace	Training	Hazard
+Powered Industrial Trucks	Intermediate	Rack Storage	Rack	Storage	Safety	Workplace	Training
+Powered Industrial Trucks	Intermediate	Warehouse	Warehouse	Safety	Workplace	Training	Hazard
+Powered Industrial Trucks	Intermediate	Loading Dock	Loading	Dock	Safety	Workplace	Training
+Powered Industrial Trucks	Intermediate	Trailer	Trailer	Safety	Workplace	Training	Hazard
+Powered Industrial Trucks	Intermediate	Pallet Jack	Pallet	Jack	Safety	Workplace	Training
+Powered Industrial Trucks	Intermediate	Counterbalance Forklift	Counterbalance	Forklift	Safety	Workplace	Training
+Powered Industrial Trucks	Intermediate	Horn	Horn	Safety	Workplace	Training	Hazard
+Powered Industrial Trucks	Intermediate	Operator Certification	Operator	Certification	Safety	Workplace	Training
+Powered Industrial Trucks	Intermediate	Refresher Training	Refresher	Training	Safety	Workplace	Training
+Powered Industrial Trucks	Advanced	Tip Over	Tip	Over	Safety	Workplace	Training
+Powered Industrial Trucks	Advanced	Struck By	Struck	By	Safety	Workplace	Training
+Powered Industrial Trucks	Advanced	Damaged Rack	Damaged	Rack	Safety	Workplace	Training
+Powered Industrial Trucks	Advanced	Unsecured Load	Unsecured	Load	Safety	Workplace	Training
+Powered Industrial Trucks	Advanced	Near Miss	Near	Miss	Safety	Workplace	Training
+Fire Safety & Emergency Response	Beginner	Fire Extinguisher	Fire	Extinguisher	Safety	Workplace	Training
+Fire Safety & Emergency Response	Beginner	PASS Method	PASS	Method	Safety	Workplace	Training
+Fire Safety & Emergency Response	Beginner	Emergency Action Plan	Emergency	Action	Plan	Safety	Workplace
+Fire Safety & Emergency Response	Beginner	Evacuation	Evacuation	Safety	Workplace	Training	Hazard
+Fire Safety & Emergency Response	Beginner	Fire Alarm	Fire	Alarm	Safety	Workplace	Training
+Fire Safety & Emergency Response	Beginner	Assembly Area	Assembly	Area	Safety	Workplace	Training
+Fire Safety & Emergency Response	Beginner	Sprinkler System	Sprinkler	System	Safety	Workplace	Training
+Fire Safety & Emergency Response	Beginner	Fire Door	Fire	Door	Safety	Workplace	Training
+Fire Safety & Emergency Response	Beginner	Emergency Coordinator	Emergency	Coordinator	Safety	Workplace	Training
+Fire Safety & Emergency Response	Beginner	Fire Drill	Fire	Drill	Safety	Workplace	Training
+Fire Safety & Emergency Response	Intermediate	Exit Route	Exit	Route	Safety	Workplace	Training
+Fire Safety & Emergency Response	Intermediate	Pull Station	Pull	Station	Safety	Workplace	Training
+Fire Safety & Emergency Response	Intermediate	Emergency Lighting	Emergency	Lighting	Safety	Workplace	Training
+Fire Safety & Emergency Response	Intermediate	Smoke Detector	Smoke	Detector	Safety	Workplace	Training
+Fire Safety & Emergency Response	Intermediate	Fire Pump	Fire	Pump	Safety	Workplace	Training
+Fire Safety & Emergency Response	Intermediate	Fire Hydrant	Fire	Hydrant	Safety	Workplace	Training
+Fire Safety & Emergency Response	Intermediate	Evacuation Map	Evacuation	Map	Safety	Workplace	Training
+Fire Safety & Emergency Response	Intermediate	First Aid Kit	First	Aid	Kit	Safety	Workplace
+Fire Safety & Emergency Response	Intermediate	AED	AED	Safety	Workplace	Training	Hazard
+Fire Safety & Emergency Response	Intermediate	Incident Command	Incident	Command	Safety	Workplace	Training
+Fire Safety & Emergency Response	Advanced	False Alarm	False	Alarm	Safety	Workplace	Training
+Fire Safety & Emergency Response	Advanced	Blocked Exit	Blocked	Exit	Safety	Workplace	Training
+Fire Safety & Emergency Response	Advanced	Emergency Response Team	Emergency	Response	Team	Safety	Workplace
+Fire Safety & Emergency Response	Advanced	Accountability Check	Accountability	Check	Safety	Workplace	Training
+Fire Safety & Emergency Response	Advanced	Muster Point	Muster	Point	Safety	Workplace	Training
+Ergonomics	Beginner	Ergonomics	Ergonomics	Safety	Workplace	Training	Hazard
+Ergonomics	Beginner	Neutral Posture	Neutral	Posture	Safety	Workplace	Training
+Ergonomics	Beginner	Repetitive Motion	Repetitive	Motion	Safety	Workplace	Training
+Ergonomics	Beginner	Material Handling	Material	Handling	Safety	Workplace	Training
+Ergonomics	Beginner	Awkward Posture	Awkward	Posture	Safety	Workplace	Training
+Ergonomics	Beginner	Forceful Exertion	Forceful	Exertion	Safety	Workplace	Training
+Ergonomics	Beginner	Stretch and Flex	Stretch	and	Flex	Safety	Workplace
+Ergonomics	Beginner	Contact Stress	Contact	Stress	Safety	Workplace	Training
+Ergonomics	Beginner	Early Warning Signs	Early	Warning	Signs	Safety	Workplace
+Ergonomics	Beginner	Workstation Design	Workstation	Design	Safety	Workplace	Training
+Ergonomics	Intermediate	Adjustable Workstation	Adjustable	Workstation	Safety	Workplace	Training
+Ergonomics	Intermediate	Lift Table	Lift	Table	Safety	Workplace	Training
+Ergonomics	Intermediate	Pallet Positioner	Pallet	Positioner	Safety	Workplace	Training
+Ergonomics	Intermediate	Vacuum Lift Assist	Vacuum	Lift	Assist	Safety	Workplace
+Ergonomics	Intermediate	Anti-Fatigue Mat	Anti	Fatigue	Mat	Safety	Workplace
+Ergonomics	Intermediate	Sit-Stand Desk	Sit	Stand	Desk	Safety	Workplace
+Ergonomics	Intermediate	Hand Truck	Hand	Truck	Safety	Workplace	Training
+Ergonomics	Intermediate	Scanner	Scanner	Safety	Workplace	Training	Hazard
+Ergonomics	Intermediate	Reach Zone	Reach	Zone	Safety	Workplace	Training
+Ergonomics	Intermediate	Workbench	Workbench	Safety	Workplace	Training	Hazard
+Ergonomics	Advanced	Soft Tissue Injury	Soft	Tissue	Injury	Safety	Workplace
+Ergonomics	Advanced	Muscle Fatigue	Muscle	Fatigue	Safety	Workplace	Training
+Ergonomics	Advanced	Overreaching	Overreaching	Safety	Workplace	Training	Hazard
+Ergonomics	Advanced	Early Reporting	Early	Reporting	Safety	Workplace	Training
+Ergonomics	Advanced	Musculoskeletal Disorder	Musculoskeletal	Disorder	Safety	Workplace	Training
